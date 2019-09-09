@@ -1,49 +1,36 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DetailPresenter from "./DetailPresenter";
-import { moviesApi, tvApi } from "../../api";
+import { movies, tv } from "../../api";
+import { useApi } from "../../hooks";
 
-export default class extends React.Component {
-  constructor(props) {
-    super(props);
-    const {
-      location: { pathname }
-    } = props;
-    this.state = {
-      result: null,
-      error: null,
-      loading: true,
-      isMovie: pathname.includes("/movie/")
-    };
+export default ({
+  location: { pathname },
+  match: {
+    params: { id }
   }
-
-  async componentDidMount() {
-    const {
-      match: {
-        params: { id }
-      },
-      history: { push }
-    } = this.props;
-    const { isMovie } = this.state;
-    const parsedId = parseInt(id);
-    if (isNaN(parsedId)) {
-      return push("/");
+}) => {
+  const getDetail = async () => {
+    const isMovie = pathname.includes("movie");
+    let result;
+    if (isMovie) {
+      const { data } = await movies.getMovie(id);
+      result = data;
+    } else {
+      const { data } = await tv.getShow(id);
+      result = data;
     }
-    let result = null;
-    try {
-      if (isMovie) {
-        ({ data: result } = await moviesApi.movieDetail(parsedId));
-      } else {
-        ({ data: result } = await tvApi.showDetail(parsedId));
-      }
-    } catch {
-      this.setState({ error: "Can't find anything." });
-    } finally {
-      this.setState({ loading: false, result });
-    }
-  }
+    setResult(result);
+  };
 
-  render() {
-    const { result, error, loading } = this.state;
-    return <DetailPresenter result={result} error={error} loading={loading} />;
-  }
-}
+  const { loading, error, wrappedFn } = useApi({
+    errorMessage: "Can't find what you're looking for",
+    inputFn: getDetail
+  });
+  const [result, setResult] = useState(null);
+
+  useEffect(() => {
+    wrappedFn();
+  }, []);
+
+  return <DetailPresenter loading={loading} result={result} error={error} />;
+};

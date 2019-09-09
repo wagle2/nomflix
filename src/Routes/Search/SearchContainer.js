@@ -1,65 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import SearchPresenter from "./SearchPresenter";
-import { moviesApi } from "api";
-import { tvApi } from "api";
+import { movies, tv } from "../../api";
+import { useApi } from "../../hooks";
 
-export default class extends React.Component {
-  state = {
+export default () => {
+  const search = async searchingBy => {
+    setLoading(true);
+    const {
+      data: { results: movieResults }
+    } = await movies.searchMovies(searchingBy);
+    const {
+      data: { results: showResults }
+    } = await tv.searchTv(searchingBy);
+    setData({
+      movieResults,
+      showResults
+    });
+  };
+  const [searchingBy, setSearchingBy] = useState("");
+  const [data, setData] = useState({
     movieResults: null,
-    tvResults: null,
-    searchTerm: "",
-    loading: false,
-    error: null
+    showResults: null
+  });
+  const { loading, error, setLoading, wrappedFn } = useApi({
+    initialLoading: false,
+    inputFn: search,
+    errorMessage: "Can't search"
+  });
+
+  const onSearchChange = event => {
+    const {
+      target: { value }
+    } = event;
+    setSearchingBy(value);
   };
 
-  handleSubmit = (event) => {
+  const onSearchSubmit = event => {
     event.preventDefault();
-    const { searchTerm } = this.state;
-    if (searchTerm !== "") {
-      this.searchByTerm(searchTerm);
+    if (searchingBy !== "") {
+      wrappedFn(searchingBy);
     }
   };
 
-  updateTerm = (event) => {
-    const { target:{value} } = event;
-    this.setState({
-      searchTerm: value
-    })
-  }
-
-  searchByTerm = async () => {
-    const { searchTerm } = this.state;
-    this.setState({ loading: true });
-    try {
-      const {
-        data: { results: movieResults }
-      } = await moviesApi.search(searchTerm);
-      const {
-        data: { results: tvResults }
-      } = await tvApi.search(searchTerm);
-      this.setState({
-        movieResults,
-        tvResults
-      });
-    } catch {
-      this.setState({ error: "Can't find results." });
-    } finally {
-      this.setState({ loading: false });
-    }
-  };
-
-  render() {
-    const { movieResults, tvResults, searchTerm, loading, error } = this.state;
-    return (
-      <SearchPresenter
-        movieResults={movieResults}
-        tvResults={tvResults}
-        searchTerm={searchTerm}
-        loading={loading}
-        error={error}
-        handleSubmit={this.handleSubmit}
-        updateTerm={this.updateTerm}
-      />
-    );
-  }
-}
+  return (
+    <SearchPresenter
+      loading={loading}
+      error={error}
+      movieResults={data.movieResults}
+      showResults={data.showResults}
+      searchingBy={searchingBy}
+      onSearchChange={onSearchChange}
+      onSearchSubmit={onSearchSubmit}
+    />
+  );
+};

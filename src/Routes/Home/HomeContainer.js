@@ -1,49 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { movies } from "../../api";
 import HomePresenter from "./HomePresenter";
-import {moviesApi} from "api"
+import { useApi } from "../../hooks";
 
-export default class extends React.Component {
-  state = {
-    nowPlaying: null,
-    upcoming: null,
-    popular: null,
-    error: null,
-    loading: true
+export default () => {
+  const getMovies = async () => {
+    const {
+      data: { results: popular }
+    } = await movies.getPopular();
+    const {
+      data: { results: upcoming }
+    } = await movies.getUpcoming();
+    const {
+      data: { results: nowPlaying }
+    } = await movies.getNowPlaying();
+    setData({
+      popular,
+      upcoming,
+      nowPlaying
+    });
   };
 
-  // async 기다려
- async componentDidMount() {
-    try {
-        //기다려!
-        const {data : {results : nowPlaying}} = await moviesApi.nowPlaying();
-        const {data : {results : upcoming}} = await moviesApi.upcoming();
-        const {data : {results : popular}} = await moviesApi.popular();
-        this.setState({
-            nowPlaying, // nowPlaying: nowPlaying
-            upcoming,
-            popular
-        })
-    } catch {
-        this.setState({
-            error: "Can't find movies information."
-        });
-    } finally {
-        this.setState({
-            loading: false
-        });
-    }
-  }
+  const [data, setData] = useState({
+    popular: null,
+    upcoming: null,
+    nowPlaying: null
+  });
+  const { loading, error, wrappedFn } = useApi({
+    inputFn: getMovies,
+    errorMessage: "Could not get movies"
+  });
 
-  render() {
-    const { nowPlaying, upcoming, popular, error, loading } = this.state;
-    return (
-      <HomePresenter
-        nowPlaying={nowPlaying}
-        upcoming={upcoming}
-        popular={popular}
-        error={error}
-        loading={loading}
-      />
-    );
-  }
-}
+  useEffect(() => {
+    wrappedFn("dick", true);
+  }, []);
+
+  return (
+    <HomePresenter
+      loading={loading}
+      error={error}
+      popular={data.popular}
+      upcoming={data.upcoming}
+      nowPlaying={data.nowPlaying}
+    />
+  );
+};

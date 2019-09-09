@@ -3,20 +3,19 @@ import reset from "styled-reset";
 
 const GlobalStyles = createGlobalStyle`
     ${reset};
-    a{
-        text-decoration:none;
-        color: inherit;
-    }
     *{
         box-sizing:border-box;
     }
-    body{
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        font-size:12px;
-        background-color: rgba(20,20,20,1);
-        color:white;
-        padding-top:80px;
+    a{
+        color:inherit;
+        text-decoration:none;
     }
-`
+    body{
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+        font-size:14px;
+        padding-top:45px;
+        background-color:rgb(20, 20, 20);
+    }
+`;
 
 export default GlobalStyles;

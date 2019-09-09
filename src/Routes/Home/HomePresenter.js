@@ -1,75 +1,76 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Section from "../../Components/Section";
-import Loader from "../../Components/Loader";
-import Message from "../../Components/Message";
-import Poster from "../../Components/Poster";
+import Loading from "Components/Loading";
+import Poster from "Components/Poster";
+import Section from "Components/Section";
+import ErrorText from "Components/ErrorText";
 
 const Container = styled.div`
-  padding: 0px 20px;
+  padding: 10px;
+  padding-top: 30px;
 `;
 
-const HomePresenter = ({ nowPlaying, popular, upcoming, loading, error }) =>
+const HomePresenter = ({ loading, error, popular, upcoming, nowPlaying }) =>
   loading ? (
-    <Loader />
+    <Loading />
   ) : (
     <Container>
-      {nowPlaying && nowPlaying.length > 0 && (
-        <Section title="Now Playing">
-          {nowPlaying.map(movie => (
-            <Poster
-              key={movie.id}
-              id={movie.id}
-              imageUrl={movie.poster_path}
-              title={movie.original_title}
-              rating={movie.vote_average}
-              year={movie.release_date.substring(0, 4)}
-              isMovie={true}
-            />
-          ))}
-        </Section>
-      )}
-      {upcoming && upcoming.length > 0 && (
-        <Section title="Upcoming Movies">
-          {upcoming.map(movie => (
-            <Poster
-              key={movie.id}
-              id={movie.id}
-              imageUrl={movie.poster_path}
-              title={movie.original_title}
-              rating={movie.vote_average}
-              year={movie.release_date.substring(0, 4)}
-              isMovie={true}
-            />
-          ))}
-        </Section>
-      )}
-      {popular && popular.length > 0 && (
+      {popular && (
         <Section title="Popular Movies">
           {popular.map(movie => (
             <Poster
-              key={movie.id}
-              id={movie.id}
               imageUrl={movie.poster_path}
-              title={movie.original_title}
               rating={movie.vote_average}
+              name={movie.title}
               year={movie.release_date.substring(0, 4)}
-              isMovie={true}
+              isTv={false}
+              id={movie.id}
+              key={movie.id}
             />
           ))}
         </Section>
       )}
-      {error && <Message text={error} color="#e74c3c" />}{" "}
+      {upcoming && (
+        <Section title="Upcoming Movies">
+          {upcoming.map(movie => (
+            <Poster
+              imageUrl={movie.poster_path}
+              rating={movie.vote_average}
+              name={movie.title}
+              year={movie.release_date.substring(0, 4)}
+              isTv={false}
+              id={movie.id}
+              key={movie.id}
+            />
+          ))}
+        </Section>
+      )}
+      {nowPlaying && (
+        <Section title="Now Playing">
+          {nowPlaying.map(movie => (
+            <Poster
+              imageUrl={movie.poster_path}
+              rating={movie.vote_average}
+              name={movie.title}
+              year={movie.release_date.substring(0, 4)}
+              isTv={false}
+              id={movie.id}
+              key={movie.id}
+            />
+          ))}
+        </Section>
+      )}
+      {error && <ErrorText text={error} />}
     </Container>
   );
 
 HomePresenter.propTypes = {
-  nowPlaying: PropTypes.array,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string,
   popular: PropTypes.array,
   upcoming: PropTypes.array,
-  loading: PropTypes.bool.isRequired,
-  error: PropTypes.string
+  nowPlaying: PropTypes.array
 };
 
 export default HomePresenter;

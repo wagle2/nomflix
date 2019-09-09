@@ -1,72 +1,76 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Section from "../../Components/Section";
-import Loader from "../../Components/Loader";
-import Message from "../../Components/Message";
-import Poster from "../../Components/Poster";
+import Loading from "Components/Loading";
+import Poster from "Components/Poster";
+import Section from "Components/Section";
+import ErrorText from "Components/ErrorText";
 
 const Container = styled.div`
-  padding: 0px 20px;
+  padding: 10px;
+  padding-top: 30px;
 `;
 
-const TVPresenter = ({ topRated, popular, airingToday, loading, error }) =>
+const HomePresenter = ({ loading, error, popular, topRated, airingToday }) =>
   loading ? (
-    <Loader />
+    <Loading />
   ) : (
     <Container>
-      {topRated && topRated.length > 0 && (
-        <Section title="Top Rated Shows">
-          {topRated.map(show => (
+      {popular && (
+        <Section title="Popular Shows">
+          {popular.map(show => (
             <Poster
-              key={show.id}
-              id={show.id}
               imageUrl={show.poster_path}
-              title={show.original_name}
               rating={show.vote_average}
+              name={show.original_name}
               year={show.first_air_date.substring(0, 4)}
+              isTv={true}
+              id={show.id}
+              key={show.id}
             />
           ))}
         </Section>
       )}
-      {popular && popular.length > 0 && (
-        <Section title="Popular Shows">
-          {popular.map(show => (
+      {topRated && (
+        <Section title="Top Rated">
+          {topRated.map(show => (
             <Poster
-            key={show.id}
-            id={show.id}
-            imageUrl={show.poster_path}
-            title={show.original_name}
-            rating={show.vote_average}
-            year={show.first_air_date.substring(0, 4)}
-          />
+              imageUrl={show.poster_path}
+              rating={show.vote_average}
+              name={show.original_name}
+              year={show.first_air_date.substring(0, 4)}
+              isTv={true}
+              id={show.id}
+              key={show.id}
+            />
           ))}
         </Section>
       )}
-      {airingToday && airingToday.length > 0 && (
+      {airingToday && (
         <Section title="Airing Today">
           {airingToday.map(show => (
             <Poster
-            key={show.id}
-            id={show.id}
-            imageUrl={show.poster_path}
-            title={show.original_name}
-            rating={show.vote_average}
-            year={show.first_air_date.substring(0, 4)}
-          />
+              imageUrl={show.poster_path}
+              rating={show.vote_average}
+              name={show.original_name}
+              year={show.first_air_date.substring(0, 4)}
+              isTv={true}
+              id={show.id}
+              key={show.id}
+            />
           ))}
         </Section>
       )}
-      {error && <Message text={error} color="#e74c3c" />}{" "}
+      {error && <ErrorText text={error} />}
     </Container>
   );
 
-TVPresenter.propTypes = {
-  topRated: PropTypes.array,
-  popular: PropTypes.array,
-  airingToday: PropTypes.array,
+HomePresenter.propTypes = {
   loading: PropTypes.bool.isRequired,
-  error: PropTypes.string
+  error: PropTypes.string,
+  popular: PropTypes.array,
+  topRated: PropTypes.array,
+  airingToday: PropTypes.array
 };
 
-export default TVPresenter;
+export default HomePresenter;

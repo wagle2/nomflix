@@ -1,97 +1,104 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Loader from "../../Components/Loader";
-import Section from "../../Components/Section";
-import Message from "../../Components/Message";
-import Poster from "../../Components/Poster";
-
+import Loading from "Components/Loading";
+import Section from "Components/Section";
+import Poster from "Components/Poster";
+import ErrorText from "Components/ErrorText";
 
 const Container = styled.div`
-  padding: 0px 20px;
+  width: 100%;
+  display: flex;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  padding-top: 50px;
 `;
 
 const Form = styled.form`
-  margin-bottom: 50px;
+  all: unset;
   width: 100%;
+  margin-bottom: 50px;
 `;
 
 const Input = styled.input`
   all: unset;
-  font-size: 28px;
+  font-size: 36px;
+  color: white;
   width: 100%;
+  padding-bottom: 10px;
 `;
 
 const SearchPresenter = ({
-  movieResults,
-  tvResults,
-  searchTerm,
   loading,
-  error,
-  handleSubmit,
-  updateTerm
+  movieResults,
+  showResults,
+  searchingBy,
+  onSearchChange,
+  onSearchSubmit,
+  error
 }) => (
   <Container>
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={onSearchSubmit}>
       <Input
-        placeholder="Search Movies or TV Shows..."
-        value={searchTerm}
-        onChange={updateTerm}
+        placeholder="Search for a Movie or TV Show"
+        autoFocus={true}
+        value={searchingBy}
+        onChange={onSearchChange}
       />
     </Form>
     {loading ? (
-      <Loader />
+      <Loading />
     ) : (
       <>
-        {movieResults && movieResults.length > 0 && (
+        {movieResults && movieResults.length !== 0 && (
           <Section title="Movie Results">
             {movieResults.map(movie => (
               <Poster
-                key={movie.id}
-                id={movie.id}
                 imageUrl={movie.poster_path}
-                title={movie.original_title}
                 rating={movie.vote_average}
+                name={movie.title}
                 year={movie.release_date.substring(0, 4)}
-                isMovie={true}
+                isTv={false}
+                id={movie.id}
+                key={movie.id}
               />
             ))}
           </Section>
         )}
-        {tvResults && tvResults.length > 0 && (
+        {showResults && showResults.length !== 0 && (
           <Section title="TV Show Results">
-            {tvResults.map(show => (
+            {showResults.map(show => (
               <Poster
-              key={show.id}
-              id={show.id}
-              imageUrl={show.poster_path}
-              title={show.original_name}
-              rating={show.vote_average}
-              year={show.first_air_date.substring(0, 4)}
-            />
+                imageUrl={show.poster_path}
+                rating={show.vote_average}
+                name={show.original_name}
+                year={show.first_air_date.substring(0, 4)}
+                isTv={true}
+                id={show.id}
+                key={show.id}
+              />
             ))}
           </Section>
         )}
-        {error && <Message text={error} color="#e74c3c" />}
-        {tvResults &&
-          movieResults &&
-          tvResults.length === 0 &&
-          movieResults.length === 0 && (
-            <Message text={`Nothing Found`} color="#e74c3c" />
-          )}
       </>
     )}
+    {error && <ErrorText text={error} />}
+    {movieResults &&
+      movieResults.length === 0 &&
+      showResults &&
+      showResults.length === 0 && <ErrorText text={"Nothing was found"} />}
   </Container>
 );
 
 SearchPresenter.propTypes = {
-  movieResults: PropTypes.array,
-  tvResults: PropTypes.array,
-  searchTerm: PropTypes.string,
+  searchingBy: PropTypes.string.isRequired,
   loading: PropTypes.bool.isRequired,
+  movieResults: PropTypes.array,
+  showResults: PropTypes.array,
   error: PropTypes.string,
-  handleSubmit: PropTypes.func.isRequired,
-  updateTerm: PropTypes.func.isRequired
+  onSearchChange: PropTypes.func.isRequired,
+  onSearchSubmit: PropTypes.func.isRequired
 };
 
 export default SearchPresenter;
