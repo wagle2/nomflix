@@ -1,4 +1,6 @@
 {
+  "deploy": "npm run build &&gh-pages -d build",
+  "homepage": "https://wagle2.github.io/nomflix",
   "name": "nomflix",
   "version": "0.1.0",
   "private": true,
@@ -33,5 +35,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^2.1.1"
   }
 }
