@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "870f9495d8402654ac500305fdacdeec",
+    "revision": "1f83a13b84864a592064a74d4e070119",
     "url": "/nomflix/index.html"
   },
   {
@@ -8,8 +8,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/nomflix/static/js/2.34be0466.chunk.js"
   },
   {
-    "revision": "1fece1681d66bada9933",
-    "url": "/nomflix/static/js/main.4f5c3574.chunk.js"
+    "revision": "dd7b6936e294ecffa58a",
+    "url": "/nomflix/static/js/main.2ef3fc52.chunk.js"
   },
   {
     "revision": "767bd30a57c9579b580e",
